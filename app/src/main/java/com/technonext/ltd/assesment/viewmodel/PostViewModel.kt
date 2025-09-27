@@ -48,6 +48,21 @@ class PostViewModel @Inject constructor(
         }
     }
 
+    fun searchPosts(query: String) {
+        viewModelScope.launch {
+            if (query.isEmpty()) {
+                // Reset to normal lazy loading
+                currentPage = 0
+                _isEndReached.value = false
+                _posts.value = emptyList()
+                loadNextPage()
+            } else {
+                val results = repo.searchPosts(query)
+                _posts.value = results
+            }
+        }
+    }
+
     fun refresh() {
         currentPage = 0
         _posts.value = emptyList()

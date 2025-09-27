@@ -25,6 +25,26 @@ class PostRepository @Inject constructor(
         }
     }
 
+    suspend fun searchPosts(query: String): List<Post> {
+        // Search in Room first
+        val cachedResults = dao.searchPosts(query)
+        if (cachedResults.isNotEmpty()) return cachedResults
+
+        // If online, fetch remaining posts from API
+        // Here you can implement paging or fetch all posts and filter
+        val allPosts = mutableListOf<Post>()
+        var offset = 0
+        val limit = 20
+        while (true) {
+            val page = api.getPosts(offset, limit)
+            if (page.isEmpty()) break
+            dao.insertPosts(page)
+            allPosts.addAll(page)
+            offset += limit
+        }
+        return allPosts.filter { it.title.contains(query, ignoreCase = true) }
+    }
+
     suspend fun getAllCachedPosts(): List<Post> = dao.getPosts(Int.MAX_VALUE, 0)
 }
 

@@ -19,4 +19,7 @@ interface PostDao {
 
     @Query("SELECT MAX(id) FROM posts")
     suspend fun getMaxPostId(): Int?
+
+    @Query("SELECT * FROM posts WHERE title LIKE '%' || :query || '%' ORDER BY id")
+    suspend fun searchPosts(query: String): List<Post>
 }
