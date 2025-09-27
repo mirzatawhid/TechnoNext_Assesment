@@ -57,10 +57,7 @@ fun PostScreen(viewModel: PostViewModel = hiltViewModel(), onNavigateToFavorites
             TopAppBar(
                 title = { Text("Posts") },
                 actions = {
-                    IconButton(onClick = {
-                        // Navigate to FavoriteScreen
-                        onNavigateToFavorites()
-                    }) {
+                    IconButton(onClick = { onNavigateToFavorites() }) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = "Go to Favorites"
@@ -69,10 +66,11 @@ fun PostScreen(viewModel: PostViewModel = hiltViewModel(), onNavigateToFavorites
                 }
             )
         }
-    ){
+    ) { paddingValues -> // <-- Receive inner padding from Scaffold
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues) // <-- Apply padding to avoid overlap with TopAppBar
                 .pullRefresh(pullRefreshState)
                 .pointerInput(Unit) {}
                 .clickable(
@@ -109,12 +107,10 @@ fun PostScreen(viewModel: PostViewModel = hiltViewModel(), onNavigateToFavorites
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     itemsIndexed(posts) { index, post ->
 
-                        // Lazy load next page only if not searching
                         if (searchQuery.isEmpty() && index >= posts.lastIndex - 3 && !isEndReached) {
                             LaunchedEffect(Unit) { viewModel.loadNextPage() }
                         }
 
-                        // Each post card
                         Card(
                             modifier = Modifier
                                 .padding(8.dp)
@@ -132,7 +128,6 @@ fun PostScreen(viewModel: PostViewModel = hiltViewModel(), onNavigateToFavorites
                                     Text(text = post.body, style = MaterialTheme.typography.bodyMedium)
                                 }
 
-                                // ❤️ Favorite icon toggle
                                 IconButton(onClick = { viewModel.toggleFavorite(post) }) {
                                     if (post.isFavorite) {
                                         Icon(
@@ -151,7 +146,6 @@ fun PostScreen(viewModel: PostViewModel = hiltViewModel(), onNavigateToFavorites
                         }
                     }
 
-                    // ⏳ Bottom loading indicator
                     if (!isEndReached && searchQuery.isEmpty()) {
                         item {
                             Box(
@@ -167,7 +161,6 @@ fun PostScreen(viewModel: PostViewModel = hiltViewModel(), onNavigateToFavorites
                 }
             }
 
-            // 🔄 Pull refresh indicator
             PullRefreshIndicator(
                 refreshing = isRefreshing,
                 state = pullRefreshState,
