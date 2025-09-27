@@ -8,8 +8,10 @@ import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import com.technonext.ltd.assesment.data.local.post.Post
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
@@ -32,6 +34,13 @@ class PostViewModel @Inject constructor(
     init {
         loadNextPage()
     }
+
+    val favoritePosts = repo.getFavoritePosts().stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        emptyList()
+    )
+
 
     // Lazy load next page
     fun loadNextPage(forceRefresh: Boolean = false) {
@@ -69,6 +78,17 @@ class PostViewModel @Inject constructor(
         _isEndReached.value = false
         _isRefreshing.value = true
         loadNextPage(forceRefresh = true)
+    }
+
+    fun toggleFavorite(post: Post) {
+        viewModelScope.launch {
+            val updatedPost = repo.toggleFavorite(post)
+
+            // update the current list in StateFlow so UI reflects instantly
+            _posts.value = _posts.value.map {
+                if (it.id == updatedPost.id) updatedPost else it
+            }
+        }
     }
 
 

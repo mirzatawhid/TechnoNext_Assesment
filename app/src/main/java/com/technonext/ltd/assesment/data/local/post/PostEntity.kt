@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class Post(
     @PrimaryKey val id: Int,
     val title: String,
-    val body: String
+    val body: String,
+    val isFavorite: Boolean = false // default false
 )

@@ -3,6 +3,7 @@ package com.technonext.ltd.assesment.data.repository
 import com.technonext.ltd.assesment.data.local.post.Post
 import com.technonext.ltd.assesment.data.local.post.PostDao
 import com.technonext.ltd.assesment.data.remote.PostApi
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 
@@ -45,6 +46,13 @@ class PostRepository @Inject constructor(
         return allPosts.filter { it.title.contains(query, ignoreCase = true) }
     }
 
-    suspend fun getAllCachedPosts(): List<Post> = dao.getPosts(Int.MAX_VALUE, 0)
+    suspend fun toggleFavorite(post: Post) : Post {
+        val updated = post.copy(isFavorite = !post.isFavorite)
+        dao.updatePost(updated)
+        return updated
+    }
+
+    fun getFavoritePosts(): Flow<List<Post>> = dao.getFavoritePosts()
+
 }
 

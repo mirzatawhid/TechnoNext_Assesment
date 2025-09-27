@@ -28,7 +28,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideDb(app: Application): PostDatabase =
-        Room.databaseBuilder(app, PostDatabase::class.java, "posts.db").build()
+        Room.databaseBuilder(app, PostDatabase::class.java, "posts.db").fallbackToDestructiveMigration()   // 🚨 This will clear DB on version change
+            .build()
 
     @Provides
     fun provideDao(db: PostDatabase): PostDao = db.postDao()
