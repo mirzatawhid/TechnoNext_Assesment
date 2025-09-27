@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.technonext.ltd.assesment.viewmodel.LoginViewModel
-import com.technonext.ltd.assesment.viewmodel.UiState
+import com.technonext.ltd.assesment.ui.state.UiState
 
 @Composable
 fun LoginScreen(

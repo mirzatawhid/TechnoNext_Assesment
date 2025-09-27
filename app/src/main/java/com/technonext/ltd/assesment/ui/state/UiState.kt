@@ -1,4 +1,4 @@
-package com.technonext.ltd.assesment.viewmodel
+package com.technonext.ltd.assesment.ui.state
 
 sealed class UiState {
     object Loading : UiState()
